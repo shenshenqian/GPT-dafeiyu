@@ -1,0 +1,33 @@
+{
+  "preserved_rows": [
+    {
+      "row": 0,
+      "unchanged": true
+    },
+    {
+      "row": 1,
+      "unchanged": true
+    },
+    {
+      "row": 2,
+      "unchanged": true
+    },
+    {
+      "row": 3,
+      "unchanged": true
+    },
+    {
+      "row": 4,
+      "unchanged": true
+    },
+    {
+      "row": 9,
+      "unchanged": true
+    },
+    {
+      "row": 10,
+      "unchanged": true
+    }
+  ],
+  "rebuild_matches_approved_atlas": true
+}
