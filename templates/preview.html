@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__PET_TITLE__ · 状态预览</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f7fc;color:#17243c;font:15px/1.6 'Microsoft YaHei',system-ui,sans-serif}main{max-width:980px;margin:auto;padding:38px 24px}h1{font-size:30px;margin:0 0 4px}p{margin:4px 0 22px;color:#617089}.tag{color:#2455a2;background:#e6efff;border-radius:20px;padding:4px 12px;font-size:12px;display:inline-block;margin-bottom:12px}.layout{display:grid;grid-template-columns:1fr 252px;gap:22px}.stage{min-height:420px;border-radius:22px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid #dbe4f0;background-color:#fff;background-image:linear-gradient(45deg,#edf1f7 25%,transparent 25%),linear-gradient(-45deg,#edf1f7 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#edf1f7 75%),linear-gradient(-45deg,transparent 75%,#edf1f7 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}.stage.dark{background:#1a2234}.stage.sky{background:linear-gradient(145deg,#bedbff,#e3f6ff 55%,#e1e7ff)}.state-label{position:absolute;left:20px;top:16px;background:#ffffffdc;padding:4px 12px;border-radius:20px;color:#315078;font-size:13px}.sprite{background-repeat:no-repeat;width:192px;height:208px;flex-shrink:0}aside{background:white;border:1px solid #dbe4f0;border-radius:22px;padding:20px}h2{font-size:14px;margin:0 0 12px}.states{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}button{border:1px solid #d6e0ee;border-radius:10px;background:white;color:#344863;padding:8px 12px;cursor:pointer;font:inherit;font-size:13px}button.active{background:#285cba;border-color:#285cba;color:white}button:focus-visible{outline:3px solid #83b5ff;outline-offset:2px}label{display:block;margin-top:18px;color:#52647e;font-size:13px}input[type=range]{width:100%;accent-color:#285cba}.small{font-size:12px;color:#6a7890}details{margin:24px 0 0;background:#fff;padding:15px 20px;border-radius:14px;border:1px solid #dbe4f0}summary{cursor:pointer;font-weight:600}a{color:#285cba}footer{margin-top:24px;color:#718097;font-size:12px}.follow{display:flex;align-items:center;gap:7px}.follow input{accent-color:#285cba}@media(max-width:680px){main{padding:24px 16px}.layout{grid-template-columns:1fr}.stage{min-height:340px}aside{padding:16px}}
+</style>
+<main>
+<span class="tag">Codex 本地桌宠 · 试用版</span>
+<h1>__PET_TITLE__</h1><p>切换状态、调整大小，看看她在桌面上的表现。</p>
+<div class="states" id="versions"><button data-version="enhanced" class="active">当前版本</button><button data-version="original">原版对比</button></div><div class="layout"><div class="stage" id="stage"><span class="state-label" id="stateLabel">待机</span><div class="sprite" id="sprite" role="img" aria-label="大肥鱼状态动画"></div></div><aside>
+<h2>常用状态</h2><div class="states" id="states"></div>
+<h2>画布</h2><div class="states" id="backgrounds"><button class="active" data-bg="">透明格</button><button data-bg="dark">深色</button><button data-bg="sky">浅蓝</button></div>
+<label>显示大小 <span id="sizeValue">100%</span><input id="size" type="range" min="60" max="150" value="100" step="10"></label>
+<label>播放速度 <span id="speedValue">1×</span><input id="speed" type="range" min="50" max="150" value="100" step="10"></label>
+<label class="follow"><input type="checkbox" id="follow">跟随鼠标视线</label><p class="small" style="margin-top:8px">开启后，把鼠标移到角色周围。移出画布后恢复状态动画。</p>
+</aside></div>
+<details><summary>其他兼容动作</summary><div class="states" id="extras" style="margin-top:14px;margin-bottom:0"></div></details>
+<details><summary>在 Codex 中使用</summary><p style="margin:10px 0 0">打开设置 → 宠物，刷新列表后选择对应宠物，再使用 <code>/pet</code> 显示桌宠。预览中的动作与安装包使用同一张图集。</p></details>
+<footer>角色来源：上善无形 / ZipZipPipe；表情参考：ming · <a href="https://github.com/diwer/ai-biaoqingbao">ai-biaoqingbao</a>。动画为参考素材衍生的本地试用版，来源与使用范围详见安装包 NOTICE。</footer>
+</main>
+<script>
+const atlasVersions=__ATLAS_SOURCES_JSON__;
+const rows={idle:{label:'待机',row:0,t:[280,110,110,140,140,320]},right:{label:'向右移动',row:1,t:[120,120,120,120,120,120,120,220]},left:{label:'向左移动',row:2,t:[120,120,120,120,120,120,120,220]},waving:{label:'打招呼',row:3,t:[140,140,140,280]},jumping:{label:'跳跃',row:4,t:[140,140,140,140,280]},failed:{label:'遇到错误',row:5,t:[140,140,140,140,140,140,140,240]},waiting:{label:'等待确认',row:6,t:[150,150,150,150,150,260]},running:{label:'正在工作',row:7,t:[120,120,120,120,120,220]},review:{label:'完成待查看',row:8,t:[150,150,150,150,150,280]}};
+const sprite=document.getElementById('sprite'),stage=document.getElementById('stage'),stateLabel=document.getElementById('stateLabel');let state='idle',frame=0,last=0,acc=0,scale=1,speed=1,look=null;
+function draw(row,col){sprite.style.backgroundSize=`${1536*scale}px ${2288*scale}px`;sprite.style.backgroundPosition=`${-col*192*scale}px ${-row*208*scale}px`;sprite.style.width=`${192*scale}px`;sprite.style.height=`${208*scale}px`}
+function select(key){state=key;frame=0;acc=0;stateLabel.textContent=rows[key].label;document.querySelectorAll('[data-state]').forEach(b=>{const a=b.dataset.state===key;b.classList.toggle('active',a);b.setAttribute('aria-pressed',String(a))});draw(rows[key].row,0)}
+for(const key of ['idle','running','waiting','review','failed','waving','jumping','left','right']){const b=document.createElement('button');b.textContent=rows[key].label;b.dataset.state=key;b.onclick=()=>select(key);document.getElementById(['idle','running','waiting','review','failed'].includes(key)?'states':'extras').append(b)}
+document.getElementById('backgrounds').onclick=e=>{const b=e.target.closest('button');if(!b)return;stage.className='stage '+b.dataset.bg;document.querySelectorAll('[data-bg]').forEach(x=>x.classList.toggle('active',x===b))};
+document.getElementById('size').oninput=e=>{scale=Number(e.target.value)/100;document.getElementById('sizeValue').textContent=e.target.value+'%';draw(rows[state].row,frame)};
+document.getElementById('speed').oninput=e=>{speed=Number(e.target.value)/100;document.getElementById('speedValue').textContent=speed+'×'};
+stage.onmousemove=e=>{if(!document.getElementById('follow').checked)return;const r=sprite.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height*.33;if(Math.hypot(dx,dy)<24){look=null;return}look=Math.round(((Math.atan2(dx,-dy)*180/Math.PI+360)%360)/22.5)%16};stage.onmouseleave=()=>{look=null};document.getElementById('follow').onchange=()=>{look=null};
+function tick(t){const dt=last?Math.min(t-last,100):0;last=t;if(look!==null){draw(9+Math.floor(look/8),look%8)}else{acc+=dt*speed;const r=rows[state];while(acc>=r.t[frame]){acc-=r.t[frame];frame=(frame+1)%r.t.length}draw(r.row,frame)}requestAnimationFrame(tick)}function setVersion(key){sprite.style.backgroundImage='url('+JSON.stringify(atlasVersions[key])+')';document.querySelectorAll('[data-version]').forEach(b=>b.classList.toggle('active',b.dataset.version===key))}document.getElementById('versions').onclick=e=>{const b=e.target.closest('[data-version]');if(b)setVersion(b.dataset.version)};setVersion('enhanced');select('running');requestAnimationFrame(tick);
+</script>
+</html>

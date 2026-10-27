@@ -1,0 +1,17 @@
+{
+  "pet": {
+    "id": "dafeiyu-work",
+    "displayName": "大肥鱼·打工增强版",
+    "description": "敲键盘工作、摊手等待确认、点赞庆祝、抱头报错的独立增强版。",
+    "spriteVersionNumber": 2,
+    "spritesheetPath": "spritesheet.webp"
+  },
+  "rows": {
+    "failed": "assets/dafeiyu-work/failed.webp",
+    "waiting": "assets/dafeiyu-work/waiting.webp",
+    "running": "assets/dafeiyu-work/running.webp",
+    "review": "assets/dafeiyu-work/review.webp"
+  },
+  "notice": "NOTICE.md",
+  "readme": "pets/dafeiyu-work/README.md"
+}
